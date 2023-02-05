@@ -81,8 +81,8 @@ if __name__ == "__main__":
     init_water = time.time()
     init_eyes = time.time()
     init_exercise = time.time()
-    watersecs = 2 * 60
-    exsecs = 20*60
+    watersecs = 60
+    exsecs = 2*60
     eyessecs = 10*60
     while True:
     # if 1:

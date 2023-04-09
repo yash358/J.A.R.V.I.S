@@ -66,7 +66,9 @@ def sendEmail(to, content):
 def musiconloop(file, stopper):
     mixer.init()
     mixer.music.load(file)
-    mixer.music.play()
+    mixer.music.play(loops=-1)
+
+
     while True:
         input_of_user = input()
         if input_of_user == stopper:
@@ -77,92 +79,109 @@ def musiconloop(file, stopper):
 if __name__ == "__main__":
     wishMe()
     init_battery = time.time()
-    battery_secs = 5*60
+    battery_secs = 20
     init_water = time.time()
-    init_eyes = time.time()
-    init_exercise = time.time()
-    watersecs = 60
-    exsecs = 2*60
-    eyessecs = 10*60
+    # init_eyes = time.time()
+    # init_exercise = time.time()
+    watersecs = 1*60
+    # exsecs = 2*60
+    # eyessecs = 10*60
     while True:
-    # if 1:
         query = takeCommand().lower()
-        # Logic for executing tasks based on query
-        if 'wikipedia' in query:
-            speak('Searching Wikipedia...')
-            query = query.replace("wikipedia", "")
-            results = wikipedia.summary(query, sentences=2)
-            speak("According to Wikipedia")
-            print(results)
-            speak(results)
 
-        elif 'open youtube' in query:
-            webbrowser.open("youtube.com")
-
-        elif 'open google' in query:
-            webbrowser.open("google.com")
-
-        elif 'open stackoverflow' in query:
-            webbrowser.open("stackoverflow.com")
-
-
-        elif 'play music' in query:
-            # music_dir = 'D:\\Non Critical\\songs\\Favorite Songs2'
-            # songs = os.listdir(music_dir)
-            # print(songs)
-            # os.startfile(os.path.join(music_dir, songs[0]))
-            webbrowser.open("https://open.spotify.com/collection/tracks")
-
-        elif 'time' in query:
-            strTime = datetime.now().strftime("%H:%M:%S")
-            print(strTime)
-            speak(f"Sir, the time is {strTime}")
-
-        elif 'open vs code' in query:
-            codePath = "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
-            os.startfile(codePath)
-
-        elif 'email to yash' in query:
-            try:
-                speak("What should I say?")
-                content = takeCommand()
-                to = "receiver's email"
-                sendEmail(to, content)
-                speak("Email has been sent!")
-            except Exception as e:
-                print(e)
-                speak("Sorry Sir. I am not able to send this email")
-
-        elif 'news' in query:
-            speak('News for Today .. ')
-
-            speak('So first news is..')
-            url = 'https://newsapi.org/v2/top-headlines?country=in&apiKey=22fa274e85764348aa45e21d5c3026d3'
-            news = requests.get(url).text
-            news_dict = json.loads(news)
-            arts = news_dict['articles']
-            # n = len(arts)
-            i = 0
-            for article in arts:
-                time.sleep(1)
-                if i == 5 - 1:
-                    speak("Today's last News is..")
-                    print(article['title'])
-                    speak(article['title'])
-                    break
-                print(article['title'])
-                speak(article['title'])
-                i += 1
-                time.sleep(1)
-                if i != 5 - 1:
-                    speak("Moving to the next news..")
-        elif 'exit' in query:
-            speak('Thank You Sir. Have a nice day')
-            break
-
+        #battery
         battery = psutil.sensors_battery()
         percent = battery.percent
-        if percent < 30:
+        plugged = battery.power_plugged
+        # Logic for executing tasks based on query
+        if 'jarvis' in query:
+            query = query.replace('jarvis', '')
+            query = query.strip()
+            if 'wikipedia' in query:
+                speak('Searching Wikipedia...')
+                query = query.strip()
+                print(query)
+                results = wikipedia.summary(query, sentences=2)
+                speak("According to Wikipedia")
+                print(results)
+                speak(results)
+
+            elif 'open vs code' in query:
+                codePath = "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
+                os.startfile(codePath)
+
+            # elif 'open youtube' in query:
+            #     webbrowser.open("www.youtube.com")
+            #
+            # elif 'open google' in query:
+            #     webbrowser.open("www.google.com")
+            #
+            # elif 'open stackoverflow' in query:
+            #     webbrowser.open("www.stackoverflow.com")
+            elif 'open' in query:
+                web = query.replace('open', '')
+                web = web.replace(" ", "")
+                webbrowser.open("www." + web + ".com")
+
+
+            elif 'play music' in query:
+                music_dir = 'D:\music'
+                songs = os.listdir(music_dir)
+                print(songs)
+                os.startfile(os.path.join(music_dir, songs[0]))
+
+                # webbrowser.open("https://open.spotify.com/collection/tracks")
+
+
+            elif 'time' in query:
+                strTime = datetime.now().strftime("%H:%M:%S")
+                print(strTime)
+                speak(f"Sir, the time is {strTime}")
+
+
+
+            # elif 'email to yash' in query:
+            #     try:
+            #         speak("What should I say?")
+            #         content = takeCommand()
+            #         to = "receiver's email"
+            #         sendEmail(to, content)
+            #         speak("Email has been sent!")
+            #     except Exception as e:
+            #         print(e)
+            #         speak("Sorry Sir. I am not able to send this email")
+
+            elif 'news' in query:
+                speak('News for Today .. ')
+
+                speak('So first news is..')
+                url = 'https://newsapi.org/v2/top-headlines?country=in&apiKey=22fa274e85764348aa45e21d5c3026d3'
+                news = requests.get(url).text
+                news_dict = json.loads(news)
+                arts = news_dict['articles']
+                # n = len(arts)
+                n = 5
+                i = 0
+                for article in arts:
+                    time.sleep(1)
+                    if i == n - 1:
+                        speak("Today's last News is..")
+                        print(article['title'])
+                        speak(article['title'])
+                        break
+                    print(article['title'])
+                    speak(article['title'])
+                    i += 1
+                    time.sleep(1)
+                    if i != n - 1:
+                        speak("Moving to the next news..")
+
+            elif 'exit' in query:
+                speak('Thank You Sir. Have a nice day')
+                break
+
+
+        if not plugged and percent < 45:
             if time.time() - init_battery > battery_secs:
                 speak(f"Sir Please Charge Your Laptop {percent}% battery remaining")
                 init_battery = time.time()
@@ -173,15 +192,15 @@ if __name__ == "__main__":
             musiconloop('Drink Water And Mind My Business.mp3', 'drank')
             init_water = time.time()
 
-        if time.time() - init_eyes >eyessecs:
-            speak('Eye exercise time')
-            print("Eye exercise time. Enter 'doneeyes' to stop the alarm.")
-            musiconloop('Open Your Eyes ALARM.mp3', 'doneeyes')
-            init_eyes = time.time()
-
-        if time.time() - init_exercise > exsecs:
-            speak('Physical Activity Time')
-            print("Physical Activity Time. Enter 'donephy' to stop the alarm.")
-            musiconloop('Workout Alarm.mp3', 'donephy')
-            init_exercise = time.time()
+        # if time.time() - init_eyes > eyessecs:
+        #     speak('Eye exercise time')
+        #     print("Eye exercise time. Enter 'doneeyes' to stop the alarm.")
+        #     musiconloop('Open Your Eyes ALARM.mp3', 'doneeyes')
+        #     init_eyes = time.time()
+        #
+        # if time.time() - init_exercise > exsecs:
+        #     speak('Physical Activity Time')
+        #     print("Physical Activity Time. Enter 'donephy' to stop the alarm.")
+        #     musiconloop('Workout Alarm.mp3', 'donephy')
+        #     init_exercise = time.time()
 

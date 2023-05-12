@@ -4,12 +4,12 @@ from datetime import datetime
 import wikipedia #pip install wikipedia
 import webbrowser
 import os
-import smtplib
 import psutil
 from pygame import mixer
 import json
 import requests
 import time
+import pywhatkit #pip install pywhatkit
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
@@ -38,9 +38,9 @@ def takeCommand():
 
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        r.adjust_for_ambient_noise(source, duration=0.2)
+        r.adjust_for_ambient_noise(source, duration=0.5)
         print("Listening...")
-        r.energy_threshold = 300
+        r.energy_threshold = 200
         r.pause_threshold = 1
         audio = r.listen(source)
     try:
@@ -53,14 +53,6 @@ def takeCommand():
         print("Say that again please...")
         return "None"
     return query
-
-def sendEmail(to, content):
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.ehlo()
-    server.starttls()
-    server.login('your email', 'password')
-    server.sendmail('your email', to, content)
-    server.close()
 
 
 def musiconloop(file, stopper):
@@ -80,12 +72,10 @@ if __name__ == "__main__":
     wishMe()
     init_battery = time.time()
     battery_secs = 20
+
     init_water = time.time()
-    # init_eyes = time.time()
-    # init_exercise = time.time()
     watersecs = 1*60
-    # exsecs = 2*60
-    # eyessecs = 10*60
+
     while True:
         query = takeCommand().lower()
 
@@ -93,31 +83,28 @@ if __name__ == "__main__":
         battery = psutil.sensors_battery()
         percent = battery.percent
         plugged = battery.power_plugged
+
         # Logic for executing tasks based on query
-        if 'jarvis' in query:
+        if 'jarvis' or 'javed' in query:
             query = query.replace('jarvis', '')
+            query = query.replace('javed', '')
             query = query.strip()
             if 'wikipedia' in query:
                 speak('Searching Wikipedia...')
-                query = query.strip()
-                print(query)
-                results = wikipedia.summary(query, sentences=2)
-                speak("According to Wikipedia")
+
+                wikipedia.set_lang("en")
+
+                results = wikipedia.summary(query, sentences=1)
+
+                # get the summary of the first search result
                 print(results)
                 speak(results)
 
-            elif 'open vs code' in query:
+            elif 'open code' in query:
                 codePath = "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
                 os.startfile(codePath)
 
-            # elif 'open youtube' in query:
-            #     webbrowser.open("www.youtube.com")
-            #
-            # elif 'open google' in query:
-            #     webbrowser.open("www.google.com")
-            #
-            # elif 'open stackoverflow' in query:
-            #     webbrowser.open("www.stackoverflow.com")
+
             elif 'open' in query:
                 web = query.replace('open', '')
                 web = web.replace(" ", "")
@@ -125,12 +112,17 @@ if __name__ == "__main__":
 
 
             elif 'play music' in query:
+                # webbrowser.open("https://open.spotify.com/collection/tracks")
+
                 music_dir = 'D:\music'
                 songs = os.listdir(music_dir)
                 print(songs)
                 os.startfile(os.path.join(music_dir, songs[0]))
 
-                # webbrowser.open("https://open.spotify.com/collection/tracks")
+
+            elif 'play' in query:
+                query = query.replace('play', '')
+                pywhatkit.playonyt(query)
 
 
             elif 'time' in query:
@@ -138,18 +130,6 @@ if __name__ == "__main__":
                 print(strTime)
                 speak(f"Sir, the time is {strTime}")
 
-
-
-            # elif 'email to yash' in query:
-            #     try:
-            #         speak("What should I say?")
-            #         content = takeCommand()
-            #         to = "receiver's email"
-            #         sendEmail(to, content)
-            #         speak("Email has been sent!")
-            #     except Exception as e:
-            #         print(e)
-            #         speak("Sorry Sir. I am not able to send this email")
 
             elif 'news' in query:
                 speak('News for Today .. ')
@@ -162,6 +142,7 @@ if __name__ == "__main__":
                 # n = len(arts)
                 n = 5
                 i = 0
+
                 for article in arts:
                     time.sleep(1)
                     if i == n - 1:
@@ -181,7 +162,7 @@ if __name__ == "__main__":
                 break
 
 
-        if not plugged and percent < 45:
+        if not plugged and percent < 30:
             if time.time() - init_battery > battery_secs:
                 speak(f"Sir Please Charge Your Laptop {percent}% battery remaining")
                 init_battery = time.time()
@@ -189,18 +170,7 @@ if __name__ == "__main__":
         if time.time() - init_water > watersecs:
             speak('Sir Please Drink Water')
             print("Water Drinking time. Enter 'drank' to stop the alarm.")
-            musiconloop('Drink Water And Mind My Business.mp3', 'drank')
+            musiconloop('alarm-clock-short-6402.mp3', 'drank')
             init_water = time.time()
 
-        # if time.time() - init_eyes > eyessecs:
-        #     speak('Eye exercise time')
-        #     print("Eye exercise time. Enter 'doneeyes' to stop the alarm.")
-        #     musiconloop('Open Your Eyes ALARM.mp3', 'doneeyes')
-        #     init_eyes = time.time()
-        #
-        # if time.time() - init_exercise > exsecs:
-        #     speak('Physical Activity Time')
-        #     print("Physical Activity Time. Enter 'donephy' to stop the alarm.")
-        #     musiconloop('Workout Alarm.mp3', 'donephy')
-        #     init_exercise = time.time()
 
